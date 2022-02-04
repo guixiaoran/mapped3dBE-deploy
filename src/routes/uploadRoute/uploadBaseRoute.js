@@ -10,7 +10,9 @@ const uploadImage =
   method: 'POST',
   path: '/api/upload/uploadImage',
   handler: function (request, reply) {
+    console.log("from inside " + request)
     var payloadData = request.payload;
+    console.log("from inside"+payloadData)
     return new Promise((resolve, reject) => {
       Controller.UploadBaseController.uploadImage(payloadData, function (err, data) {
         if (err) {
@@ -28,7 +30,8 @@ const uploadImage =
       maxBytes: 20715200,
       output: 'stream',
       parse: true,
-      allow: 'multipart/form-data'
+      allow: 'multipart/form-data',
+      multipart: true,
     },
     validate: {
       payload: Joi.object({
@@ -114,7 +117,8 @@ const uploadDocument =
       maxBytes: 20715200,
       output: 'stream',
       parse: true,
-      allow: 'multipart/form-data'
+      allow: 'multipart/form-data',
+      'multipart' : true
     },
     validate: {
       payload: Joi.object({
