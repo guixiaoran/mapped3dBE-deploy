@@ -8,17 +8,16 @@
 * - ERROR - ‘red’
 * - FATAL - ‘magenta’
 */
+import CONFIG from "../config";
+import UniversalFunctions from "../utils/universalFunctions";
+import async from "async"
+import Path from "path";
+import knox from "knox";
+import fsExtra from "fs-extra";
+import fs from "fs";
+import AWS from "aws-sdk";
+import ffmpeg from "fluent-ffmpeg";
 
-var CONFIG = require('../config');
-var UniversalFunctions = require('../utils/universalFunctions');
-var async = require('async');
-var Path = require('path');
-var knox = require('knox');
-var fsExtra = require('fs-extra');
-var fs = require('fs');
-var AWS = require('ibm-cos-sdk');
-var ffmpeg = require("fluent-ffmpeg");
-///*
 // 1) Save Local Files
 // 2) Create Thumbnails
 // 3) Upload Files to S3
@@ -52,14 +51,12 @@ var uploadImageToS3Bucket = function uploadImageToS3Bucket(file, isThumb, callba
         filename = file.thumbName;
         folder = file.s3FolderThumb;
     }
-    //<------ Start of Configuration for ibm bucket -------------->
-    var ibms3Config = {
-        endpoint: CONFIG.AWS_S3_CONFIG.s3BucketCredentials.endpoint,
-        apiKeyId: CONFIG.AWS_S3_CONFIG.s3BucketCredentials.apiKeyId,
-        serviceInstanceId: CONFIG.AWS_S3_CONFIG.s3BucketCredentials.serviceInstanceId
-    };
-    //<------ End of Configuration for ibm bucket -------------->
-    uploadLogger.info("path to read::" + path + filename);
+    //<-------  Configuation of s3 bcuket ------------>
+    var accessKeyId = CONFIG.AWS_S3_CONFIG.s3BucketCredentials.accessKeyId;
+    var secretAccessKeyId = CONFIG.AWS_S3_CONFIG.s3BucketCredentials.secretAccessKey;
+    console.log("path to read::"+path + filename);
+
+    // uploadLogger.info("path to read::" + path + filename);
     fs.readFile(path + filename, function (error, fileBuffer) {
         uploadLogger.info("path to read from temp::" + path + filename);
         if (error) {
@@ -73,8 +70,8 @@ var uploadImageToS3Bucket = function uploadImageToS3Bucket(file, isThumb, callba
             };
             return callback(errResp);
         }
-
-        var s3bucket = new AWS.S3(ibms3Config);
+        AWS.config.update({accessKeyId: accessKeyId, secretAccessKey: secretAccessKeyId});
+        var s3bucket = new AWS.S3();
         var params = {
             Bucket: CONFIG.AWS_S3_CONFIG.s3BucketCredentials.bucket,
             Key: folder + '/' + filename,
@@ -84,6 +81,7 @@ var uploadImageToS3Bucket = function uploadImageToS3Bucket(file, isThumb, callba
         };
 
         s3bucket.putObject(params, function (err, data) {
+          console.error("PUT", err,data);
             if (err) {
                 var error = {
                     response: {
@@ -225,7 +223,7 @@ function uploadFile(otherConstants, fileDetails, createThumbnail, callbackParent
         function (callback) {
             if (createThumbnail) {
                 createThumbnailImage(TEMP_FOLDER, filename, callback);
-                uploadLogger.info("*******thumbnailImage********")
+                uploadLogger.info("*******thumbnailImage********",callback)
             }
 
             else
@@ -304,8 +302,9 @@ function uploadVideoFile(otherConstants, fileDetails, createThumbnail, callbackP
 
 
 function uploadProfilePicture(profilePicture, folder, filename, callbackParent) {
+
     var baseFolder = folder + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.profilePicture;
-    var baseURL = "https://" + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.endpoint + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.bucket + '/' + baseFolder + '/';
+    var baseURL = CONFIG.AWS_S3_CONFIG.s3BucketCredentials.s3URL + '/' + baseFolder + '/';
     var urls = {};
     async.waterfall([
         function (callback) {
@@ -345,7 +344,7 @@ function uploadProfilePicture(profilePicture, folder, filename, callbackParent) 
 
 function uploadfileWithoutThumbnail(docFile, folder, filename, callbackParent) {
     var baseFolder = folder + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.docs;
-    var baseURL = "https://" + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.endpoint + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.bucket + '/' + baseFolder + '/';
+    var baseURL = CONFIG.AWS_S3_CONFIG.s3BucketCredentials.s3URL + '/' + baseFolder + '/';
     var urls = {};
     async.waterfall([
         function (callback) {
@@ -385,7 +384,7 @@ function uploadfileWithoutThumbnail(docFile, folder, filename, callbackParent) {
 
 function uploadVideoWithThumbnail(videoFile, folder, filename, callbackParent) {
     var baseFolder = folder + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.video;
-    var baseURL = "https://" + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.endpoint + '/' + CONFIG.AWS_S3_CONFIG.s3BucketCredentials.bucket + '/' + baseFolder + '/';
+    var baseURL = CONFIG.AWS_S3_CONFIG.s3BucketCredentials.s3URL + '/' + baseFolder + '/';
     var urls = {};
     var fileDetails, otherConstants;
     async.waterfall([
