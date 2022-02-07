@@ -6,10 +6,10 @@ import Joi from "joi";
 import Controller from "../../controllers";
 
 const Config = UniversalFunctions.CONFIG;
-
-const createEnvironment = {
+//public Public
+const createPublicObject = {
   method: "POST",
-  path: "/api/environment/createEnvironment",
+  path: "/api/object/createPublicObject",
   handler: function (request, h) {
     var userData =
       (request.auth &&
@@ -18,7 +18,7 @@ const createEnvironment = {
       null;
     let payloadData = request.payload;
     return new Promise((resolve, reject) => {
-      Controller.EnvironmentController.createEnvironment(
+      Controller.PublicObjectController.createPublicObject(
         userData,
         payloadData,
         function (err, data) {
@@ -35,20 +35,13 @@ const createEnvironment = {
     });
   },
   config: {
-    description: "create environment",
-    tags: ["api", "admin", "Service"],
+    description: "create PublicObject",
+    tags: ["api", "admin", "PublicObject"],
     auth: "UserAuth",
     validate: {
       payload: {
-        environmentName: Joi.string().required(""),
-        environmentCreator: Joi.string().required(""),
-        panorama: Joi.string().allow(""),
-        preset: Joi.string().allow(""),
-        video: Joi.string().allow(""),
-        floorColor: Joi.string().allow(""),
-        skyColor: Joi.string().allow(""),
-        skyUrl: Joi.string().allow(""),
-        localObjectsId: Joi.array().items(Joi.string().allow("")),
+        objectName: Joi.string().required(""),
+        url: Joi.string().allow(""),
         //  requirements: Joi.array().items(Joi.string().allow("")),
       },
       failAction: UniversalFunctions.failActionFunction,
@@ -64,9 +57,9 @@ const createEnvironment = {
   },
 };
 
-const getEnvironments = {
+const getPublicObjects = {
   method: "GET",
-  path: "/api/environment/getEnvironments",
+  path: "/api/object/getPublicObjects",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -74,7 +67,7 @@ const getEnvironments = {
         request.auth.credentials.userData) ||
       null;
     return new Promise((resolve, reject) => {
-      Controller.EnvironmentController.getEnvironments(
+      Controller.PublicObjectController.getPublicObjects(
         userData,
         function (err, data) {
           if (err) reject(UniversalFunctions.sendError(err));
@@ -90,8 +83,8 @@ const getEnvironments = {
     });
   },
   config: {
-    description: "get Environments",
-    tags: ["api", "user", "getEnvironments"],
+    description: "get Public Objects",
+    tags: ["api", "user", "getPublicObjects"],
     auth: "UserAuth",
     validate: {
       failAction: UniversalFunctions.failActionFunction,
@@ -107,9 +100,9 @@ const getEnvironments = {
   },
 };
 
-const getEnvironmentById = {
+const getPublicObjectById = {
   method: "GET",
-  path: "/api/environment/getEnvironments/{_id}",
+  path: "/api/object/getPublicObjects/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -117,7 +110,7 @@ const getEnvironmentById = {
         request.auth.credentials.userData) ||
       null;
     return new Promise((resolve, reject) => {
-      Controller.EnvironmentController.getEnvironmentById(
+      Controller.PublicObjectController.getPublicObjectById(
         userData,
         request.params._id,
         function (err, data) {
@@ -134,8 +127,8 @@ const getEnvironmentById = {
     });
   },
   config: {
-    description: "get environment",
-    tags: ["api", "user", "getEnvironmentById"],
+    description: "get Public Object by ID",
+    tags: ["api", "user", "getPublicObjectById"],
     auth: "UserAuth",
     validate: {
       failAction: UniversalFunctions.failActionFunction,
@@ -153,171 +146,6 @@ const getEnvironmentById = {
     },
   },
 };
-
-const deleteEnvironment = {
-  method: "DELETE",
-  path: "/api/environment/deleteEnvironment/{_id}",
-  handler: function (request, h) {
-    const userData =
-      (request.auth &&
-        request.auth.credentials &&
-        request.auth.credentials.userData) ||
-      null;
-    const payloadData = request.params;
-    return new Promise((resolve, reject) => {
-      Controller.EnvironmentController.deleteEnvironment(
-        userData,
-        payloadData,
-        function (err, data) {
-          if (err) reject(UniversalFunctions.sendError(err));
-          else
-            resolve(
-              UniversalFunctions.sendSuccess(
-                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-                data
-              )
-            );
-        }
-      );
-    });
-  },
-  config: {
-    description: "deleteEnvironment",
-    tags: ["api", "admin", "Environment"],
-    auth: "UserAuth",
-    validate: {
-      params: {
-        _id: Joi.string().required(),
-      },
-      failAction: UniversalFunctions.failActionFunction,
-    },
-    plugins: {
-      "hapi-swagger": {
-        security: [{ user: {} }],
-        responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS
-            .swaggerDefaultResponseMessages,
-      },
-    },
-  },
-};
-
-const updateEnvironment = {
-  method: "PUT",
-  path: "/api/environment/updateEnvironment/{_id}",
-  handler: function (request, h) {
-    const userData =
-      (request.auth &&
-        request.auth.credentials &&
-        request.auth.credentials.userData) ||
-      null;
-    const payloadData = request.payload;
-    payloadData._id = request.params._id;
-    return new Promise((resolve, reject) => {
-      Controller.EnvironmentController.updateEnvironment(
-        userData,
-        payloadData,
-        function (err, data) {
-          if (err) reject(UniversalFunctions.sendError(err));
-          else
-            resolve(
-              UniversalFunctions.sendSuccess(
-                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-                data
-              )
-            );
-        }
-      );
-    });
-  },
-  config: {
-    description: "update Environment",
-    tags: ["api", "user", "Environment"],
-    auth: "UserAuth",
-    validate: {
-      params: {
-        _id: Joi.string().required(),
-      },
-      payload: {
-        environmentName: Joi.string().required(""),
-        environmentCreator: Joi.string().required(""),
-        panorama: Joi.string().allow(""),
-        preset: Joi.string().allow(""),
-        video: Joi.string().allow(""),
-        floorColor: Joi.string().allow(""),
-        skyColor: Joi.string().allow(""),
-        skyUrl: Joi.string().allow(""),
-        localObjectsId: Joi.array().items(Joi.string().allow("")),
-        //  requirements: Joi.array().items(Joi.string().allow("")),
-      },
-      failAction: UniversalFunctions.failActionFunction,
-    },
-    plugins: {
-      "hapi-swagger": {
-        security: [{ user: {} }],
-        responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS
-            .swaggerDefaultResponseMessages,
-      },
-    },
-  },
-};
-
-export default [
-  createEnvironment,
-  getEnvironments,
-  updateEnvironment,
-  deleteEnvironment,
-  getEnvironmentById,
-];
-//, getServiceById, getServiceCount
-
-// const getServiceById = {
-//   method: "GET",
-//   path: "/api/environment/getEnvironments/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     return new Promise((resolve, reject) => {
-//       Controller.ServiceController.getServiceById(
-//         userData,
-//         request.params._id,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "get environment",
-//     tags: ["api", "user", "getServiceById"],
-//     auth: "UserAuth",
-//     validate: {
-//       failAction: UniversalFunctions.failActionFunction,
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
 
 // const getServiceCount = {
 //   method: "GET",
@@ -467,3 +295,6 @@ export default [
 //     },
 //   },
 // };
+
+export default [createPublicObject, getPublicObjects, getPublicObjectById];
+//, getServiceById, getServiceCount

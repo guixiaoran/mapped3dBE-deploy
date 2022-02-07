@@ -9,7 +9,7 @@ const Config = UniversalFunctions.CONFIG;
 
 const createLocalObject = {
   method: "POST",
-  path: "/api/Object/createLocalObject",
+  path: "/api/object/createLocalObject",
   handler: function (request, h) {
     var userData =
       (request.auth &&
@@ -63,7 +63,7 @@ const createLocalObject = {
 
 const getLocalObjects = {
   method: "GET",
-  path: "/api/Object/getLocalObjects",
+  path: "/api/object/getLocalObjects",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -106,7 +106,7 @@ const getLocalObjects = {
 
 const getLocalObjectById = {
   method: "GET",
-  path: "/api/Object/getLocalObjects/{_id}",
+  path: "/api/object/getLocalObjects/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -151,154 +151,116 @@ const getLocalObjectById = {
   },
 };
 
-// const getServiceCount = {
-//   method: "GET",
-//   path: "/api/service/getServiceCount/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     return new Promise((resolve, reject) => {
-//       Controller.ServiceController.getServiceCount(
-//         userData,
-//         request.params._id,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "get Service",
-//     tags: ["api", "user", "getService"],
-//     auth: "UserAuth",
-//     validate: {
-//       failAction: UniversalFunctions.failActionFunction,
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
+const deleteLocalObject = {
+  method: "DELETE",
+  path: "/api/object/deleteLocalObject/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    const payloadData = request.params;
+    return new Promise((resolve, reject) => {
+      Controller.LocalObjectController.deleteLocalObject(
+        userData,
+        payloadData,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "deleteLocalObject",
+    tags: ["api", "admin", "LocalObject"],
+    auth: "UserAuth",
+    validate: {
+      params: {
+        _id: Joi.string().required(),
+      },
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
 
-// const deleteCard = {
-//   method: "DELETE",
-//   path: "/api/card/deleteCard/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     const payloadData = request.params;
-//     return new Promise((resolve, reject) => {
-//       Controller.CardController.deleteCard(
-//         userData,
-//         payloadData,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "deleteCard",
-//     tags: ["api", "admin", "card"],
-//     auth: "UserAuth",
-//     validate: {
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//       failAction: UniversalFunctions.failActionFunction,
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
+const updateLocalObject = {
+  method: "PUT",
+  path: "/api/object/updateLocalObject/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    const payloadData = request.payload;
+    payloadData._id = request.params._id;
+    return new Promise((resolve, reject) => {
+      Controller.LocalObjectController.updateLocalObject(
+        userData,
+        payloadData,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "update LocalObject",
+    tags: ["api", "user", "LocalObject"],
+    auth: "UserAuth",
+    validate: {
+      params: {
+        _id: Joi.string().required(),
+      },
+      payload: {
+        environmentId: Joi.string().required(""),
+        objectName: Joi.string().required(""),
+        position: Joi.string().allow(""),
+        scale: Joi.string().allow(""),
+        rotation: Joi.string().allow(""),
+        url: Joi.string().allow(""),
+      },
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
 
-// const updateCard = {
-//   method: "PUT",
-//   path: "/api/card/updateCard/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     const payloadData = request.payload;
-//     payloadData.cardId = request.params._id;
-//     return new Promise((resolve, reject) => {
-//       Controller.CardController.updateCard(
-//         userData,
-//         payloadData,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "update Card",
-//     tags: ["api", "user", "card"],
-//     auth: "UserAuth",
-//     validate: {
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//       payload: {
-//         title: Joi.string().optional().allow(""),
-//         description: Joi.string().optional().allow(""),
-//         url: Joi.string().uri().optional().allow(""),
-//       },
-//       failAction: UniversalFunctions.failActionFunction,
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
-
-export default [createLocalObject, getLocalObjects, getLocalObjectById];
+export default [
+  createLocalObject,
+  getLocalObjects,
+  getLocalObjectById,
+  deleteLocalObject,
+  updateLocalObject,
+];
 //, getServiceById, getServiceCount

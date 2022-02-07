@@ -4,7 +4,8 @@ import AdminBaseController from "./adminController/adminBaseController";
 import UploadBaseController from "./uploadController/uploadBaseController";
 import SSOBaseController from "./ssoController/ssoBaseController";
 import EnvironmentController from "./environmentController/environmentController";
-import LocalObjectController from "./localObjectController/localObjectController"
+import LocalObjectController from "./localObjectController/localObjectController";
+import PublicObjectController from "./publicObjectController/publicObjectController";
 export default {
   DemoBaseController,
   UserBaseController,
@@ -13,4 +14,5 @@ export default {
   SSOBaseController,
   EnvironmentController,
   LocalObjectController,
+  PublicObjectController,
 };
