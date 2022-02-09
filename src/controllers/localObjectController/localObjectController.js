@@ -14,9 +14,10 @@ const _ = require("underscore");
  * @param {description} payloadData.description string
  * @param {cost} payloadData.cost string
  */
-const createLocalObject = (userData, payloadData, callback) => {
+const createLocalObjectItem = (userData, payloadData, callback) => {
+  let objectId;
   let localObjectData;
-  let userFound;
+  let userFound; // custometData
   console.log(payloadData);
 
   const task = {
@@ -32,8 +33,8 @@ const createLocalObject = (userData, payloadData, callback) => {
       });
     },
     createObject: (cb) => {
-      let localObjectToSave = {
-        CreatorID: userFound._id,
+      let localObjectItemToSave = {
+        // CreatorID: userFound._id,
         environmentId: payloadData.environmentId,
         objectName: payloadData.objectName,
         position: payloadData.position,
@@ -41,14 +42,51 @@ const createLocalObject = (userData, payloadData, callback) => {
         rotation: payloadData.rotation,
         url: payloadData.url,
       };
-      console.log("localObjectToSave", { localObjectToSave });
-      Service.LocalObjectService.createRecord(
-        localObjectToSave,
+      console.log("localObjectItemToSave", { localObjectItemToSave });
+      Service.LocalObjectItemService.createRecord(
+        localObjectItemToSave,
         function (err, data) {
           if (err) return cb(err);
           if (data?.length === 0) return cb(ERROR.DEFAULT);
           localObjectData = data;
-          console.log({ data });
+          objectId = (data && data._id) || null;
+          console.log({ data, objectId });
+          return cb();
+        }
+      );
+    },
+    addToLocalObjectList: (cb) => {
+      const criteria = {
+        environmentId: payloadData.environmentId,
+      };
+      const dataToAdd = {
+        $addToSet: {
+          localObjectItem: objectId,
+        },
+      };
+      Service.LocalObjectService.updateRecord(
+        criteria,
+        dataToAdd,
+        function (err) {
+          if (err) return cb(err);
+          return cb();
+        }
+      );
+    },
+    changeFirstLogin: (cb) => {
+      if (!userFound.firstLogin) return cb();
+      const criteria = {
+        _id: userFound._id,
+      };
+      const dataToUpdate = {
+        firstLogin: false,
+      };
+      Service.UserService.updateRecord(
+        criteria,
+        dataToUpdate,
+        {},
+        function (err) {
+          if (err) return cb(err);
           return cb();
         }
       );
@@ -231,7 +269,7 @@ const deleteLocalObject = (userData, payloadData, callback) => {
 //  * @param {String} payloadData.url ...
 //  * @param {Function} callback
 //  */
-const updateLocalObject = (userData, payloadData, callback) => {
+const updateLocalObjectItem = (userData, payloadData, callback) => {
   let userFound;
   async.series(
     [
@@ -254,17 +292,17 @@ const updateLocalObject = (userData, payloadData, callback) => {
 
       function (cb) {
         let localObjectToSave = {
-          CreatorID: userFound._id,
+          // CreatorID: userFound._id,
           environmentId: payloadData.environmentId,
           objectName: payloadData.objectName,
           position: payloadData.position,
           scale: payloadData.scale,
           rotation: payloadData.rotation,
-          url: payloadData.url,
+          // url: payloadData.url,
         };
         console.log({ localObjectToSave });
-        Service.LocalObjectService.updateRecord(
-          { _id: payloadData._id },
+        Service.LocalObjectItemService.updateRecord(
+          { _id: payloadData.objectId },
           localObjectToSave,
           {},
           function (err, data) {
@@ -282,9 +320,9 @@ const updateLocalObject = (userData, payloadData, callback) => {
 };
 
 export default {
-  createLocalObject: createLocalObject,
+  createLocalObjectItem: createLocalObjectItem,
   getLocalObjects: getLocalObjects,
   getLocalObjectById: getLocalObjectById,
   deleteLocalObject: deleteLocalObject,
-  updateLocalObject: updateLocalObject,
+  updateLocalObjectItem: updateLocalObjectItem,
 };

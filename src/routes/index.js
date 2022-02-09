@@ -3,7 +3,7 @@ import UserBaseRoute from "./userRoute/userBaseRoute";
 import AdminBaseRoute from "./adminRoute/adminBaseRoute";
 import UploadBaseRoute from "./uploadRoute/uploadBaseRoute";
 import EnvironmentRoute from "./environmentRoute/environmentRoute";
-import LocalObjectRoute from "./localObjectRoute/localObjectRoute";
+import LocalObjectItemRoute from "./localObjectItemRoute/localObjectItemRoute";
 import PublicObjectRoute from "./publicObjectRoute/publicObjectRoute";
 const Routes = [].concat(
   DemoBaseRoute,
@@ -11,7 +11,7 @@ const Routes = [].concat(
   AdminBaseRoute,
   UploadBaseRoute,
   EnvironmentRoute,
-  LocalObjectRoute,
+  LocalObjectItemRoute,
   PublicObjectRoute
 );
 

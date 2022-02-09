@@ -11,4 +11,5 @@ export default {
   EnvironmentService: new GenericService("Environment"),
   LocalObjectService: new GenericService("LocalObject"),
   PublicObjectService: new GenericService("PublicObject"),
+  LocalObjectItemService: new GenericService("LocalObjectItem"),
 };

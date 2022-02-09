@@ -42,7 +42,7 @@ const createEnvironment = (userData, payloadData, callback) => {
         floorColor: payloadData.floorColor,
         skyColor: payloadData.skyColor,
         skyUrl: payloadData.skyUrl,
-        localObjectsId: payloadData.localObjectsId,
+        // vrObjects: payloadData.vrObjects,
       };
       console.log({ environmentToSave });
       Service.EnvironmentService.createRecord(
@@ -52,6 +52,16 @@ const createEnvironment = (userData, payloadData, callback) => {
           if (data?.length === 0) return cb(ERROR.DEFAULT);
           environmentData = data;
           console.log({ data });
+          return cb();
+        }
+      );
+    },
+    // initialize object collection
+    createLocalObject: (cb) => {
+      Service.LocalObjectService.createRecord(
+        { environmentId: environmentData._id },
+        (err) => {
+          if (err) return cb(err);
           return cb();
         }
       );
@@ -134,9 +144,10 @@ const getEnvironments = (userData, callback) => {
  * @param {cost} payloadData.cost string
  */
 
-const getEnvironmentById = (userData, _id, callback) => {
+const getEnvironmentById = (userData, env_id, callback) => {
   let cardList = [];
   let userFound;
+  let localObjects;
   async.series(
     [
       function (cb) {
@@ -160,8 +171,39 @@ const getEnvironmentById = (userData, _id, callback) => {
           }
         );
       },
+      (cb) => {
+        const query = {
+          environmentId: env_id,
+        };
+        const projection = {
+          userId: 0,
+          __v: 0,
+          _id: 0,
+        };
+        const populate = {
+          path: "localObjectItem",
+          select: {
+            _id: 1,
+            objectName: 1,
+            position: 1,
+            scale: 1,
+            rotation: 1,
+            url: 1,
+          },
+        };
+        Service.LocalObjectService.getPopulatedRecords(
+          query,
+          projection,
+          populate,
+          function (err, data) {
+            if (err) return cb(err);
+            localObjects = (data && data[0].localObjectItem) || null;
+            cb();
+          }
+        );
+      },
       function (cb) {
-        const criteria = { _id: _id };
+        const criteria = { _id: env_id };
         const projection = {
           accessToken: 0,
           OTPCode: 0,
@@ -190,7 +232,7 @@ const getEnvironmentById = (userData, _id, callback) => {
     ],
     function (err, result) {
       if (err) callback(err);
-      else callback(null, { data: cardList });
+      else callback(null, { data: cardList, localObjects });
     }
   );
 };
@@ -275,7 +317,7 @@ const updateEnvironment = (userData, payloadData, callback) => {
           floorColor: payloadData.floorColor,
           skyColor: payloadData.skyColor,
           skyUrl: payloadData.skyUrl,
-          localObjectsId: payloadData.localObjectsId,
+          // localObjectsId: payloadData.localObjectsId,
         };
         console.log({ environmentToSave });
         Service.EnvironmentService.updateRecord(

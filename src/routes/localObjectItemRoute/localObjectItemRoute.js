@@ -7,9 +7,9 @@ import Controller from "../../controllers";
 
 const Config = UniversalFunctions.CONFIG;
 
-const createLocalObject = {
+const createLocalObjectItem = {
   method: "POST",
-  path: "/api/object/createLocalObject",
+  path: "/api/object/createLocalObjectItem",
   handler: function (request, h) {
     var userData =
       (request.auth &&
@@ -18,7 +18,7 @@ const createLocalObject = {
       null;
     let payloadData = request.payload;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.createLocalObject(
+      Controller.LocalObjectItemController.createLocalObjectItem(
         userData,
         payloadData,
         function (err, data) {
@@ -199,9 +199,9 @@ const deleteLocalObject = {
   },
 };
 
-const updateLocalObject = {
+const updateLocalObjectItem = {
   method: "PUT",
-  path: "/api/object/updateLocalObject/{_id}",
+  path: "/api/object/updateLocalObjectItem/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -211,7 +211,7 @@ const updateLocalObject = {
     const payloadData = request.payload;
     payloadData._id = request.params._id;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.updateLocalObject(
+      Controller.LocalObjectItemController.updateLocalObjectItem(
         userData,
         payloadData,
         function (err, data) {
@@ -257,10 +257,10 @@ const updateLocalObject = {
 };
 
 export default [
-  createLocalObject,
+  createLocalObjectItem,
   getLocalObjects,
   getLocalObjectById,
   deleteLocalObject,
-  updateLocalObject,
+  updateLocalObjectItem,
 ];
 //, getServiceById, getServiceCount
