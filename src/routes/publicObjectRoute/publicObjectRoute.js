@@ -6,10 +6,10 @@ import Joi from "joi";
 import Controller from "../../controllers";
 
 const Config = UniversalFunctions.CONFIG;
-
-const createLocalObject = {
+//public Public
+const createPublicObject = {
   method: "POST",
-  path: "/api/Object/createLocalObject",
+  path: "/api/object/createPublicObject",
   handler: function (request, h) {
     var userData =
       (request.auth &&
@@ -18,7 +18,7 @@ const createLocalObject = {
       null;
     let payloadData = request.payload;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.createLocalObject(
+      Controller.PublicObjectController.createPublicObject(
         userData,
         payloadData,
         function (err, data) {
@@ -35,16 +35,12 @@ const createLocalObject = {
     });
   },
   config: {
-    description: "create Local Object",
-    tags: ["api", "admin", "LocalObject"],
+    description: "create PublicObject",
+    tags: ["api", "admin", "PublicObject"],
     auth: "UserAuth",
     validate: {
       payload: {
-        environmentId: Joi.string().required(""),
         objectName: Joi.string().required(""),
-        position: Joi.string().required(""),
-        scale: Joi.string().allow(""),
-        rotation: Joi.string().allow(""),
         url: Joi.string().allow(""),
         //  requirements: Joi.array().items(Joi.string().allow("")),
       },
@@ -61,9 +57,9 @@ const createLocalObject = {
   },
 };
 
-const getLocalObjects = {
+const getPublicObjects = {
   method: "GET",
-  path: "/api/Object/getLocalObjects",
+  path: "/api/object/getPublicObjects",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -71,7 +67,7 @@ const getLocalObjects = {
         request.auth.credentials.userData) ||
       null;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.getLocalObjects(
+      Controller.PublicObjectController.getPublicObjects(
         userData,
         function (err, data) {
           if (err) reject(UniversalFunctions.sendError(err));
@@ -87,8 +83,8 @@ const getLocalObjects = {
     });
   },
   config: {
-    description: "get Local Objects",
-    tags: ["api", "user", "getLocalObjects"],
+    description: "get Public Objects",
+    tags: ["api", "user", "getPublicObjects"],
     auth: "UserAuth",
     validate: {
       failAction: UniversalFunctions.failActionFunction,
@@ -104,9 +100,9 @@ const getLocalObjects = {
   },
 };
 
-const getLocalObjectById = {
+const getPublicObjectById = {
   method: "GET",
-  path: "/api/Object/getLocalObjects/{_id}",
+  path: "/api/object/getPublicObjects/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -114,7 +110,7 @@ const getLocalObjectById = {
         request.auth.credentials.userData) ||
       null;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.getLocalObjectById(
+      Controller.PublicObjectController.getPublicObjectById(
         userData,
         request.params._id,
         function (err, data) {
@@ -131,8 +127,8 @@ const getLocalObjectById = {
     });
   },
   config: {
-    description: "get Local Object",
-    tags: ["api", "user", "getLocalObjectById"],
+    description: "get Public Object by ID",
+    tags: ["api", "user", "getPublicObjectById"],
     auth: "UserAuth",
     validate: {
       failAction: UniversalFunctions.failActionFunction,
@@ -300,5 +296,5 @@ const getLocalObjectById = {
 //   },
 // };
 
-export default [createLocalObject, getLocalObjects, getLocalObjectById];
+export default [createPublicObject, getPublicObjects, getPublicObjectById];
 //, getServiceById, getServiceCount

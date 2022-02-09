@@ -14,9 +14,10 @@ const _ = require("underscore");
  * @param {description} payloadData.description string
  * @param {cost} payloadData.cost string
  */
-const createLocalObject = (userData, payloadData, callback) => {
+const createLocalObjectItem = (userData, payloadData, callback) => {
+  let objectId;
   let localObjectData;
-  let userFound;
+  let userFound; // custometData
   console.log(payloadData);
 
   const task = {
@@ -31,9 +32,9 @@ const createLocalObject = (userData, payloadData, callback) => {
         cb();
       });
     },
-    createEnvironment: (cb) => {
-      let localObjectToSave = {
-        CreatorID: userFound._id,
+    createObject: (cb) => {
+      let localObjectItemToSave = {
+        // CreatorID: userFound._id,
         environmentId: payloadData.environmentId,
         objectName: payloadData.objectName,
         position: payloadData.position,
@@ -41,14 +42,51 @@ const createLocalObject = (userData, payloadData, callback) => {
         rotation: payloadData.rotation,
         url: payloadData.url,
       };
-      console.log("localObjectToSave", { localObjectToSave });
-      Service.LocalObjectService.createRecord(
-        localObjectToSave,
+      console.log("localObjectItemToSave", { localObjectItemToSave });
+      Service.LocalObjectItemService.createRecord(
+        localObjectItemToSave,
         function (err, data) {
           if (err) return cb(err);
           if (data?.length === 0) return cb(ERROR.DEFAULT);
           localObjectData = data;
-          console.log({ data });
+          objectId = (data && data._id) || null;
+          console.log({ data, objectId });
+          return cb();
+        }
+      );
+    },
+    addToLocalObjectList: (cb) => {
+      const criteria = {
+        environmentId: payloadData.environmentId,
+      };
+      const dataToAdd = {
+        $addToSet: {
+          localObjectItem: objectId,
+        },
+      };
+      Service.LocalObjectService.updateRecord(
+        criteria,
+        dataToAdd,
+        function (err) {
+          if (err) return cb(err);
+          return cb();
+        }
+      );
+    },
+    changeFirstLogin: (cb) => {
+      if (!userFound.firstLogin) return cb();
+      const criteria = {
+        _id: userFound._id,
+      };
+      const dataToUpdate = {
+        firstLogin: false,
+      };
+      Service.UserService.updateRecord(
+        criteria,
+        dataToUpdate,
+        {},
+        function (err) {
+          if (err) return cb(err);
           return cb();
         }
       );
@@ -181,170 +219,44 @@ const getLocalObjectById = (userData, _id, callback) => {
     }
   );
 };
-/**
- * @param {Object} userData
- * @param {url} payloadData.url  in url format
- * @param {Function} callback string
- * @param {name} payloadData.name string
- * @param {description} payloadData.description string
- * @param {requirements} payloadData.requirements string
- * @param {cost} payloadData.cost string
-//  * @param {serviceId} payloadData.serviceId string
- */
-// const getServiceCount = (userData, _id, callback) => {
-//   let cardList = [];
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         const criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(
-//           criteria,
-//           { password: 0 },
-//           {},
-//           function (err, data) {
-//             if (err) cb(err);
-//             else {
-//               if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//               else {
-//                 userFound = (data && data[0]) || null;
-//                 if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//                 else cb();
-//               }
-//             }
-//           }
-//         );
-//       },
-//       function (cb) {
-//         const criteria = { serviceID: _id };
 
-//         const projection = {};
-//         Service.JobService.getRecordsCount(
-//           criteria,
-//           projection,
-//           {},
-//           function (err, data) {
-//             console.log(`Number of times service is used:---->`, { data });
-//             if (err) cb(err);
-//             else {
-//               console.log(data);
-//               (cardList = data),
-//                 // cardList = data.map((element) => {
-//                 //   // return UniversalFunctions.processUserData(element);
-//                 //   return element;
-//                 // });
-//                 cb();
-//             }
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) callback(err);
-//       else callback(null, { data: cardList });
-//     }
-//   );
-// };
-
-// const getServiceById = (userData, _id, callback) => {
-//   let cardList = [];
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         const criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(
-//           criteria,
-//           { password: 0 },
-//           {},
-//           function (err, data) {
-//             if (err) cb(err);
-//             else {
-//               if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//               else {
-//                 userFound = (data && data[0]) || null;
-//                 if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//                 else cb();
-//               }
-//             }
-//           }
-//         );
-//       },
-//       function (cb) {
-//         const criteria = { _id: _id };
-//         const projection = {
-//           accessToken: 0,
-//           OTPCode: 0,
-//           code: 0,
-//           codeUpdatedAt: 0,
-//           registrationDate: 0,
-//         };
-//         Service.ServiceService.getRecord(
-//           criteria,
-//           projection,
-//           {},
-
-//           function (err, data) {
-//             console.log(`Service data---->`, { data });
-//             if (err) cb(err);
-//             else {
-//               cardList = data.map((element) => {
-//                 // return UniversalFunctions.processUserData(element);
-//                 return element;
-//               });
-//               cb();
-//             }
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) callback(err);
-//       else callback(null, { data: cardList });
-//     }
-//   );
-// };
-// const deleteCard = (userData, payloadData, callback) => {
-//   let news;
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         var criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(criteria, {}, {}, function (err, data) {
-//           if (err) cb(err);
-//           else {
-//             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//             else {
-//               userFound = (data && data[0]) || null;
-//               if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//               else cb();
-//             }
-//           }
-//         });
-//       },
-//       function (cb) {
-//         Service.CardService.deleteRecord(
-//           { _id: payloadData._id },
-//           function (err, data) {
-//             if (err) cb(err);
-//             else cb();
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) return callback(err);
-//       else return callback(null, { data: news });
-//     }
-//   );
-// };
+const deleteLocalObject = (userData, payloadData, callback) => {
+  let news;
+  let userFound;
+  async.series(
+    [
+      function (cb) {
+        var criteria = {
+          _id: userData.userId,
+        };
+        Service.UserService.getRecord(criteria, {}, {}, function (err, data) {
+          if (err) cb(err);
+          else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              userFound = (data && data[0]) || null;
+              if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
+            }
+          }
+        });
+      },
+      function (cb) {
+        Service.LocalObjectService.deleteRecord(
+          { _id: payloadData._id },
+          function (err, data) {
+            if (err) cb(err);
+            else cb();
+          }
+        );
+      },
+    ],
+    function (err, result) {
+      if (err) return callback(err);
+      else return callback(null, { data: news });
+    }
+  );
+};
 
 // /**
 //  *
@@ -357,56 +269,60 @@ const getLocalObjectById = (userData, _id, callback) => {
 //  * @param {String} payloadData.url ...
 //  * @param {Function} callback
 //  */
-// const updateCard = (userData, payloadData, callback) => {
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         var criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(criteria, {}, {}, function (err, data) {
-//           if (err) cb(err);
-//           else {
-//             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//             else {
-//               userFound = (data && data[0]) || null;
-//               if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//               else cb();
-//             }
-//           }
-//         });
-//       },
+const updateLocalObjectItem = (userData, payloadData, callback) => {
+  let userFound;
+  async.series(
+    [
+      function (cb) {
+        var criteria = {
+          _id: userData.userId,
+        };
+        Service.UserService.getRecord(criteria, {}, {}, function (err, data) {
+          if (err) cb(err);
+          else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              userFound = (data && data[0]) || null;
+              if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
+            }
+          }
+        });
+      },
 
-//       function (cb) {
-//         let cardToSave = {
-//           title: payloadData.title,
-//           description: payloadData.description,
-//           url: payloadData.url,
-//         };
-//         console.log({ cardToSave });
-//         Service.CardService.updateRecord(
-//           { _id: payloadData.cardId },
-//           cardToSave,
-//           {},
-//           function (err, data) {
-//             if (err) cb(err);
-//             else cb();
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) return callback(err);
-//       else return callback(null);
-//     }
-//   );
-// };
+      function (cb) {
+        let localObjectToSave = {
+          // CreatorID: userFound._id,
+          environmentId: payloadData.environmentId,
+          objectName: payloadData.objectName,
+          position: payloadData.position,
+          scale: payloadData.scale,
+          rotation: payloadData.rotation,
+          // url: payloadData.url,
+        };
+        console.log({ localObjectToSave });
+        Service.LocalObjectItemService.updateRecord(
+          { _id: payloadData.objectId },
+          localObjectToSave,
+          {},
+          function (err, data) {
+            if (err) cb(err);
+            else cb();
+          }
+        );
+      },
+    ],
+    function (err, result) {
+      if (err) return callback(err);
+      else return callback(null);
+    }
+  );
+};
 
 export default {
-  createLocalObject: createLocalObject,
+  createLocalObjectItem: createLocalObjectItem,
   getLocalObjects: getLocalObjects,
   getLocalObjectById: getLocalObjectById,
-  // deleteCard: deleteCard,
-  // updateCard: updateCard,
+  deleteLocalObject: deleteLocalObject,
+  updateLocalObjectItem: updateLocalObjectItem,
 };

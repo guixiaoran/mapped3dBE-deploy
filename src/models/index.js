@@ -7,6 +7,8 @@ import Token from "./token";
 import SSO from "./sso";
 import Environment from "./environment";
 import LocalObject from "./localObject";
+import LocalObjectItem from "./localObjectItem";
+import PublicObject from "./publicObject";
 
 const ForgetPassword = require("./forgotPasswordRequest");
 
@@ -18,4 +20,6 @@ export default {
   SSO,
   Environment,
   LocalObject,
+  PublicObject,
+  LocalObjectItem,
 };

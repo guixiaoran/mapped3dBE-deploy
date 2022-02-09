@@ -47,6 +47,8 @@ const createEnvironment = {
         video: Joi.string().allow(""),
         floorColor: Joi.string().allow(""),
         skyColor: Joi.string().allow(""),
+        skyUrl: Joi.string().allow(""),
+        // localObjectsId: Joi.array().items(Joi.string().allow("")),
         //  requirements: Joi.array().items(Joi.string().allow("")),
       },
       failAction: UniversalFunctions.failActionFunction,
@@ -104,6 +106,171 @@ const getEnvironments = {
     },
   },
 };
+
+const getEnvironmentById = {
+  method: "GET",
+  path: "/api/environment/getEnvironments/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    return new Promise((resolve, reject) => {
+      Controller.EnvironmentController.getEnvironmentById(
+        userData,
+        request.params._id,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "get environment",
+    tags: ["api", "user", "getEnvironmentById"],
+    auth: "UserAuth",
+    validate: {
+      failAction: UniversalFunctions.failActionFunction,
+      params: {
+        _id: Joi.string().required(),
+      },
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
+
+const deleteEnvironment = {
+  method: "DELETE",
+  path: "/api/environment/deleteEnvironment/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    const payloadData = request.params;
+    return new Promise((resolve, reject) => {
+      Controller.EnvironmentController.deleteEnvironment(
+        userData,
+        payloadData,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "deleteEnvironment",
+    tags: ["api", "admin", "Environment"],
+    auth: "UserAuth",
+    validate: {
+      params: {
+        _id: Joi.string().required(),
+      },
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
+
+const updateEnvironment = {
+  method: "PUT",
+  path: "/api/environment/updateEnvironment/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    const payloadData = request.payload;
+    payloadData._id = request.params._id;
+    return new Promise((resolve, reject) => {
+      Controller.EnvironmentController.updateEnvironment(
+        userData,
+        payloadData,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "update Environment",
+    tags: ["api", "user", "Environment"],
+    auth: "UserAuth",
+    validate: {
+      params: {
+        _id: Joi.string().required(),
+      },
+      payload: {
+        environmentName: Joi.string().required(""),
+        environmentCreator: Joi.string().required(""),
+        panorama: Joi.string().allow(""),
+        preset: Joi.string().allow(""),
+        video: Joi.string().allow(""),
+        floorColor: Joi.string().allow(""),
+        skyColor: Joi.string().allow(""),
+        skyUrl: Joi.string().allow(""),
+        // localObjectsId: Joi.array().items(Joi.string().allow("")),
+        //  requirements: Joi.array().items(Joi.string().allow("")),
+      },
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
+
+export default [
+  createEnvironment,
+  getEnvironments,
+  updateEnvironment,
+  deleteEnvironment,
+  getEnvironmentById,
+];
+//, getServiceById, getServiceCount
 
 // const getServiceById = {
 //   method: "GET",
@@ -300,6 +467,3 @@ const getEnvironments = {
 //     },
 //   },
 // };
-
-export default [createEnvironment, getEnvironments];
-//, getServiceById, getServiceCount
