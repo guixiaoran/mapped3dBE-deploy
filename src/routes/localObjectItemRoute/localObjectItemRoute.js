@@ -151,9 +151,9 @@ const getLocalObjectById = {
   },
 };
 
-const deleteLocalObject = {
+const deleteLocalObjectItem = {
   method: "DELETE",
-  path: "/api/object/deleteLocalObject/{_id}",
+  path: "/api/object/deleteLocalObjectItem/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&
@@ -162,7 +162,7 @@ const deleteLocalObject = {
       null;
     const payloadData = request.params;
     return new Promise((resolve, reject) => {
-      Controller.LocalObjectController.deleteLocalObject(
+      Controller.LocalObjectItemController.deleteLocalObjectItem(
         userData,
         payloadData,
         function (err, data) {
@@ -260,7 +260,7 @@ export default [
   createLocalObjectItem,
   getLocalObjects,
   getLocalObjectById,
-  deleteLocalObject,
+  deleteLocalObjectItem,
   updateLocalObjectItem,
 ];
 //, getServiceById, getServiceCount

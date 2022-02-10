@@ -219,8 +219,7 @@ const getLocalObjectById = (userData, _id, callback) => {
     }
   );
 };
-
-const deleteLocalObject = (userData, payloadData, callback) => {
+const deleteLocalObjectItem = (userData, payloadData, callback) => {
   let news;
   let userFound;
   async.series(
@@ -242,7 +241,8 @@ const deleteLocalObject = (userData, payloadData, callback) => {
         });
       },
       function (cb) {
-        Service.LocalObjectService.deleteRecord(
+        // console.log("payloadData._id:   ", payloadData._id);
+        Service.LocalObjectItemService.deleteRecord(
           { _id: payloadData._id },
           function (err, data) {
             if (err) cb(err);
@@ -298,11 +298,11 @@ const updateLocalObjectItem = (userData, payloadData, callback) => {
           position: payloadData.position,
           scale: payloadData.scale,
           rotation: payloadData.rotation,
-          // url: payloadData.url,
+          url: payloadData.url,
         };
         console.log({ localObjectToSave });
         Service.LocalObjectItemService.updateRecord(
-          { _id: payloadData.objectId },
+          { _id: payloadData._id },
           localObjectToSave,
           {},
           function (err, data) {
@@ -323,6 +323,6 @@ export default {
   createLocalObjectItem: createLocalObjectItem,
   getLocalObjects: getLocalObjects,
   getLocalObjectById: getLocalObjectById,
-  deleteLocalObject: deleteLocalObject,
+  deleteLocalObjectItem: deleteLocalObjectItem,
   updateLocalObjectItem: updateLocalObjectItem,
 };

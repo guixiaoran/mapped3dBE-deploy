@@ -109,7 +109,7 @@ const getEnvironments = {
 
 const getEnvironmentById = {
   method: "GET",
-  path: "/api/environment/getEnvironments/{_id}",
+  path: "/api/environment/getEnvironmentById/{_id}",
   handler: function (request, h) {
     const userData =
       (request.auth &&

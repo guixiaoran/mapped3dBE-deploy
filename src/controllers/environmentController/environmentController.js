@@ -184,6 +184,7 @@ const getEnvironmentById = (userData, env_id, callback) => {
           path: "localObjectItem",
           select: {
             _id: 1,
+            environmentId: 1,
             objectName: 1,
             position: 1,
             scale: 1,

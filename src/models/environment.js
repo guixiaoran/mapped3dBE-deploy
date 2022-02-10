@@ -9,7 +9,6 @@ const environment = new Schema({
   floorColor: { type: String, trim: true, required: false },
   skyColor: { type: String, trim: true, required: false },
   skyUrl: { type: String, trim: true, required: false },
-  // vrObjects: [{ type: Schema.Types.ObjectId, ref: "LocalObject" }],
 });
 
 export default mongoose.model("environment", environment);
