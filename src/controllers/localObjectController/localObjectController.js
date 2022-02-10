@@ -298,11 +298,11 @@ const updateLocalObjectItem = (userData, payloadData, callback) => {
           position: payloadData.position,
           scale: payloadData.scale,
           rotation: payloadData.rotation,
-          // url: payloadData.url,
+          url: payloadData.url,
         };
         console.log({ localObjectToSave });
         Service.LocalObjectItemService.updateRecord(
-          { _id: payloadData.objectId },
+          { _id: payloadData._id },
           localObjectToSave,
           {},
           function (err, data) {
