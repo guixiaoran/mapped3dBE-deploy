@@ -188,123 +188,45 @@ const getPublicObjectById = (userData, _id, callback) => {
  * @param {cost} payloadData.cost string
 //  * @param {serviceId} payloadData.serviceId string
  */
-// const getServiceCount = (userData, _id, callback) => {
-//   let cardList = [];
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         const criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(
-//           criteria,
-//           { password: 0 },
-//           {},
-//           function (err, data) {
-//             if (err) cb(err);
-//             else {
-//               if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//               else {
-//                 userFound = (data && data[0]) || null;
-//                 if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//                 else cb();
-//               }
-//             }
-//           }
-//         );
-//       },
-//       function (cb) {
-//         const criteria = { serviceID: _id };
 
-//         const projection = {};
-//         Service.JobService.getRecordsCount(
-//           criteria,
-//           projection,
-//           {},
-//           function (err, data) {
-//             console.log(`Number of times service is used:---->`, { data });
-//             if (err) cb(err);
-//             else {
-//               console.log(data);
-//               (cardList = data),
-//                 // cardList = data.map((element) => {
-//                 //   // return UniversalFunctions.processUserData(element);
-//                 //   return element;
-//                 // });
-//                 cb();
-//             }
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) callback(err);
-//       else callback(null, { data: cardList });
-//     }
-//   );
-// };
+const deletePublicObject = (userData, payloadData, callback) => {
+  let news;
+  let userFound;
+  async.series(
+    [
+      function (cb) {
+        var criteria = {
+          _id: userData.userId,
+        };
+        Service.UserService.getRecord(criteria, {}, {}, function (err, data) {
+          if (err) cb(err);
+          else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              userFound = (data && data[0]) || null;
+              if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
+            }
+          }
+        });
+      },
+      function (cb) {
+        Service.PublicObjectService.deleteRecord(
+          { _id: payloadData._id },
+          function (err, data) {
+            if (err) cb(err);
+            else cb();
+          }
+        );
+      },
+    ],
+    function (err, result) {
+      if (err) return callback(err);
+      else return callback(null, { data: news });
+    }
+  );
+};
 
-// const getServiceById = (userData, _id, callback) => {
-//   let cardList = [];
-//   let userFound;
-//   async.series(
-//     [
-//       function (cb) {
-//         const criteria = {
-//           _id: userData.userId,
-//         };
-//         Service.UserService.getRecord(
-//           criteria,
-//           { password: 0 },
-//           {},
-//           function (err, data) {
-//             if (err) cb(err);
-//             else {
-//               if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-//               else {
-//                 userFound = (data && data[0]) || null;
-//                 if (userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED);
-//                 else cb();
-//               }
-//             }
-//           }
-//         );
-//       },
-//       function (cb) {
-//         const criteria = { _id: _id };
-//         const projection = {
-//           accessToken: 0,
-//           OTPCode: 0,
-//           code: 0,
-//           codeUpdatedAt: 0,
-//           registrationDate: 0,
-//         };
-//         Service.ServiceService.getRecord(
-//           criteria,
-//           projection,
-//           {},
-
-//           function (err, data) {
-//             console.log(`Service data---->`, { data });
-//             if (err) cb(err);
-//             else {
-//               cardList = data.map((element) => {
-//                 // return UniversalFunctions.processUserData(element);
-//                 return element;
-//               });
-//               cb();
-//             }
-//           }
-//         );
-//       },
-//     ],
-//     function (err, result) {
-//       if (err) callback(err);
-//       else callback(null, { data: cardList });
-//     }
-//   );
-// };
 // const deleteCard = (userData, payloadData, callback) => {
 //   let news;
 //   let userFound;
@@ -404,6 +326,7 @@ export default {
   createPublicObject: createPublicObject,
   getPublicObjects: getPublicObjects,
   getPublicObjectById: getPublicObjectById,
+  deletePublicObject: deletePublicObject,
   // deleteCard: deleteCard,
   // updateCard: updateCard,
 };

@@ -147,100 +147,53 @@ const getPublicObjectById = {
   },
 };
 
-// const getServiceCount = {
-//   method: "GET",
-//   path: "/api/service/getServiceCount/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     return new Promise((resolve, reject) => {
-//       Controller.ServiceController.getServiceCount(
-//         userData,
-//         request.params._id,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "get Service",
-//     tags: ["api", "user", "getService"],
-//     auth: "UserAuth",
-//     validate: {
-//       failAction: UniversalFunctions.failActionFunction,
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
-
-// const deleteCard = {
-//   method: "DELETE",
-//   path: "/api/card/deleteCard/{_id}",
-//   handler: function (request, h) {
-//     const userData =
-//       (request.auth &&
-//         request.auth.credentials &&
-//         request.auth.credentials.userData) ||
-//       null;
-//     const payloadData = request.params;
-//     return new Promise((resolve, reject) => {
-//       Controller.CardController.deleteCard(
-//         userData,
-//         payloadData,
-//         function (err, data) {
-//           if (err) reject(UniversalFunctions.sendError(err));
-//           else
-//             resolve(
-//               UniversalFunctions.sendSuccess(
-//                 Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
-//                 data
-//               )
-//             );
-//         }
-//       );
-//     });
-//   },
-//   config: {
-//     description: "deleteCard",
-//     tags: ["api", "admin", "card"],
-//     auth: "UserAuth",
-//     validate: {
-//       params: {
-//         _id: Joi.string().required(),
-//       },
-//       failAction: UniversalFunctions.failActionFunction,
-//     },
-//     plugins: {
-//       "hapi-swagger": {
-//         security: [{ user: {} }],
-//         responseMessages:
-//           UniversalFunctions.CONFIG.APP_CONSTANTS
-//             .swaggerDefaultResponseMessages,
-//       },
-//     },
-//   },
-// };
+const deletePublicObject = {
+  method: "DELETE",
+  path: "/api/object/deletePublicObject/{_id}",
+  handler: function (request, h) {
+    const userData =
+      (request.auth &&
+        request.auth.credentials &&
+        request.auth.credentials.userData) ||
+      null;
+    const payloadData = request.params;
+    return new Promise((resolve, reject) => {
+      Controller.PublicObjectController.deletePublicObject(
+        userData,
+        payloadData,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "delete PublicObject",
+    tags: ["api", "user", "PublicObject"],
+    auth: "UserAuth",
+    validate: {
+      params: {
+        _id: Joi.string().required(),
+      },
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ user: {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
 
 // const updateCard = {
 //   method: "PUT",
@@ -296,5 +249,10 @@ const getPublicObjectById = {
 //   },
 // };
 
-export default [createPublicObject, getPublicObjects, getPublicObjectById];
+export default [
+  createPublicObject,
+  getPublicObjects,
+  getPublicObjectById,
+  deletePublicObject,
+];
 //, getServiceById, getServiceCount

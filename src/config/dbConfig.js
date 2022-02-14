@@ -1,12 +1,10 @@
-import 'dotenv/config';
+import "dotenv/config";
 const mongo = {
-    URI: process.env.MONGO_URI || 'mongodb://localhost/User_Onboarding',
-    //URI: process.env.MONGO_URI || "mongodb://"+process.env.MONGO_USER+":"+process.env.MONGO_PASS+"@localhost/"+process.env.MONGO_DBNAME_DEV,
-    port: 27017
+  URI: process.env.MONGO_URI || "mongodb://localhost/Mapped3D",
+  //URI: process.env.MONGO_URI || "mongodb://"+process.env.MONGO_USER+":"+process.env.MONGO_PASS+"@localhost/"+process.env.MONGO_DBNAME_DEV,
+  port: 27017,
 };
 
 export default {
-    mongo
+  mongo,
 };
-
-
