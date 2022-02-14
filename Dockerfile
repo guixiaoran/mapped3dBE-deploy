@@ -1,10 +1,17 @@
-FROM node:10
+FROM node:14-alpine
 
-WORKDIR /app
+RUN apk add --update imagemagick && \
+    apk add --update graphicsmagick && \
+    apk add --update bash
+
 COPY . .
 
 EXPOSE 8000
 
-RUN npm install
+RUN npm install --silent
+
+RUN cp .env.example .env
+
+RUN PROJECT_FOLDER=data-shop-backend bash setup_upload.sh
 
 CMD ["npm","start"]

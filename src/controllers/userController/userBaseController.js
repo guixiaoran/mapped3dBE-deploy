@@ -42,7 +42,7 @@ const createUser = (payloadData, callback) => {
                 if (data[0].emailVerified == true)
                   cb(ERROR.USER_ALREADY_REGISTERED);
                 else {
-                  Service.UserService.deleteUser(
+                  Service.UserService.deleteRecord(
                     { _id: data[0]._id },
                     (err, updatedData) => {
                       if (err) cb(err);
