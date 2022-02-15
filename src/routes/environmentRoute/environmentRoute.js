@@ -106,7 +106,84 @@ const getEnvironments = {
     },
   },
 };
+const getEnvironmentsTourist = {
+  method: "GET",
+  path: "/api/environment/getEnvironmentsTourist",
+  handler: function (request, h) {
+    return new Promise((resolve, reject) => {
+      Controller.EnvironmentController.getEnvironmentsTourist(function (
+        err,
+        data
+      ) {
+        if (err) reject(UniversalFunctions.sendError(err));
+        else
+          resolve(
+            UniversalFunctions.sendSuccess(
+              Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+              data
+            )
+          );
+      });
+    });
+  },
+  config: {
+    description: "get Environments",
+    tags: ["api", "user", "getEnvironments"],
+    // auth: "UserAuth",
+    validate: {
+      failAction: UniversalFunctions.failActionFunction,
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
 
+const getEnvironmentByIdTourist = {
+  method: "GET",
+  path: "/api/environment/getEnvironmentByIdTourist/{_id}",
+  handler: function (request, h) {
+    return new Promise((resolve, reject) => {
+      Controller.EnvironmentController.getEnvironmentByIdTourist(
+        request.params._id,
+        function (err, data) {
+          if (err) reject(UniversalFunctions.sendError(err));
+          else
+            resolve(
+              UniversalFunctions.sendSuccess(
+                Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT,
+                data
+              )
+            );
+        }
+      );
+    });
+  },
+  config: {
+    description: "get environment",
+    tags: ["api", "tourist", "getEnvironmentById"],
+    // auth: "UserAuth",
+    validate: {
+      failAction: UniversalFunctions.failActionFunction,
+      params: {
+        _id: Joi.string().required(),
+      },
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS
+            .swaggerDefaultResponseMessages,
+      },
+    },
+  },
+};
 const getEnvironmentById = {
   method: "GET",
   path: "/api/environment/getEnvironmentById/{_id}",
@@ -269,6 +346,8 @@ export default [
   updateEnvironment,
   deleteEnvironment,
   getEnvironmentById,
+  getEnvironmentsTourist,
+  getEnvironmentByIdTourist,
 ];
 //, getServiceById, getServiceCount
 

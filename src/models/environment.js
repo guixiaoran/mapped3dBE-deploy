@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const environment = new Schema({
+  creatorID: { type: Schema.Types.ObjectId, ref: "user", required: true },
   environmentName: { type: String, trim: true, required: true },
   environmentCreator: { type: String, trim: true, required: true },
   panorama: { type: Boolean, default: false, required: false },
