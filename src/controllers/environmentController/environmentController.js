@@ -33,7 +33,7 @@ const createEnvironment = (userData, payloadData, callback) => {
     },
     createEnvironment: (cb) => {
       let environmentToSave = {
-        CreatorID: userFound._id,
+        creatorID: userFound._id,
         environmentName: payloadData.environmentName,
         environmentCreator: payloadData.environmentCreator,
         panorama: payloadData.panorama,
@@ -100,7 +100,9 @@ const getEnvironments = (userData, callback) => {
         );
       },
       function (cb) {
-        const criteria = {};
+        const criteria = {
+          creatorID: userFound._id,
+        };
         const projection = {
           accessToken: 0,
           OTPCode: 0,
