@@ -134,6 +134,42 @@ const getEnvironments = (userData, callback) => {
   );
 };
 
+const getEnvironmentsTourist = (callback) => {
+  let cardList = [];
+  async.series(
+    [
+      function (cb) {
+        const criteria = {};
+        const projection = {
+          accessToken: 0,
+          OTPCode: 0,
+          code: 0,
+          codeUpdatedAt: 0,
+          registrationDate: 0,
+        };
+        Service.EnvironmentService.getRecord(
+          criteria,
+          projection,
+          {},
+          function (err, data) {
+            console.log(`Environments data---->`, data);
+            if (err) cb(err);
+            else {
+              cardList = data.map((element) => {
+                return element;
+              });
+              cb();
+            }
+          }
+        );
+      },
+    ],
+    function (err, result) {
+      if (err) callback(err);
+      else callback(null, { data: cardList });
+    }
+  );
+};
 /**
  * @param {Object} userData
  * @param {url} payloadData.url  in url format
@@ -143,6 +179,77 @@ const getEnvironments = (userData, callback) => {
  * @param {requirements} payloadData.requirements string
  * @param {cost} payloadData.cost string
  */
+
+const getEnvironmentByIdTourist = (env_id, callback) => {
+  let cardList = [];
+  let localObjects;
+  async.series(
+    [
+      (cb) => {
+        const query = {
+          environmentId: env_id,
+        };
+        const projection = {
+          userId: 0,
+          __v: 0,
+          _id: 0,
+        };
+        const populate = {
+          path: "localObjectItem",
+          select: {
+            _id: 1,
+            environmentId: 1,
+            objectName: 1,
+            position: 1,
+            scale: 1,
+            rotation: 1,
+            url: 1,
+          },
+        };
+        Service.LocalObjectService.getPopulatedRecords(
+          query,
+          projection,
+          populate,
+          function (err, data) {
+            if (err) return cb(err);
+            localObjects = (data && data[0].localObjectItem) || null;
+            cb();
+          }
+        );
+      },
+      function (cb) {
+        const criteria = { _id: env_id };
+        const projection = {
+          accessToken: 0,
+          OTPCode: 0,
+          code: 0,
+          codeUpdatedAt: 0,
+          registrationDate: 0,
+        };
+        Service.EnvironmentService.getRecord(
+          criteria,
+          projection,
+          {},
+
+          function (err, data) {
+            console.log(`Environment data---->`, { data });
+            if (err) cb(err);
+            else {
+              cardList = data.map((element) => {
+                return element;
+              });
+              cb();
+            }
+          }
+        );
+      },
+    ],
+    function (err, result) {
+      if (err) callback(err);
+      else callback(null, { data: cardList, localObjects });
+    }
+  );
+};
 
 const getEnvironmentById = (userData, env_id, callback) => {
   let cardList = [];
@@ -237,6 +344,7 @@ const getEnvironmentById = (userData, env_id, callback) => {
     }
   );
 };
+
 const deleteEnvironment = (userData, payloadData, callback) => {
   let news;
   let userFound;
@@ -345,6 +453,9 @@ export default {
   getEnvironmentById: getEnvironmentById,
   deleteEnvironment: deleteEnvironment,
   updateEnvironment: updateEnvironment,
+  getEnvironmentsTourist: getEnvironmentsTourist,
+  getEnvironmentByIdTourist,
+  getEnvironmentByIdTourist,
 };
 
 // const getServiceById = (userData, _id, callback) => {
