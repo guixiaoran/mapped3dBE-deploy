@@ -34,7 +34,8 @@ const createPublicObject = (userData, payloadData, callback) => {
     },
     createObject: (cb) => {
       let publicObjectToSave = {
-        CreatorID: userFound._id,
+        creatorID: userFound._id,
+        objectType: payloadData.objectType,
         objectName: payloadData.objectName,
         url: payloadData.url,
       };
@@ -59,7 +60,7 @@ const createPublicObject = (userData, payloadData, callback) => {
 
 const getPublicObjects = (userData, callback) => {
   let cardList = [];
-  let userFound;
+  let userFound, creatorID;
   async.series(
     [
       function (cb) {
@@ -84,7 +85,7 @@ const getPublicObjects = (userData, callback) => {
         );
       },
       function (cb) {
-        const criteria = {};
+        const criteria = { creatorID: userFound._id };
         const projection = {
           accessToken: 0,
           OTPCode: 0,
