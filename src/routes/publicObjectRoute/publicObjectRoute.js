@@ -40,6 +40,7 @@ const createPublicObject = {
     auth: "UserAuth",
     validate: {
       payload: {
+        objectType: Joi.string().required(""),
         objectName: Joi.string().required(""),
         url: Joi.string().allow(""),
         //  requirements: Joi.array().items(Joi.string().allow("")),

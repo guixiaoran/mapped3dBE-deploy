@@ -35,7 +35,7 @@ const createEnvironment = (userData, payloadData, callback) => {
       let environmentToSave = {
         creatorID: userFound._id,
         environmentName: payloadData.environmentName,
-        environmentCreator: payloadData.environmentCreator,
+        environmentCreator: userFound.firstName + userFound.lastName,
         panorama: payloadData.panorama,
         preset: payloadData.preset,
         video: payloadData.video,
@@ -421,14 +421,13 @@ const updateEnvironment = (userData, payloadData, callback) => {
         let environmentToSave = {
           CreatorID: userFound._id,
           environmentName: payloadData.environmentName,
-          environmentCreator: payloadData.environmentCreator,
+          environmentCreator: userFound.firstName + userFound.lastName,
           panorama: payloadData.panorama,
           preset: payloadData.preset,
           video: payloadData.video,
           floorColor: payloadData.floorColor,
           skyColor: payloadData.skyColor,
           skyUrl: payloadData.skyUrl,
-          // localObjectsId: payloadData.localObjectsId,
         };
         console.log({ environmentToSave });
         Service.EnvironmentService.updateRecord(
