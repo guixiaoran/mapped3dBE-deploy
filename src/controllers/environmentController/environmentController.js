@@ -419,7 +419,7 @@ const updateEnvironment = (userData, payloadData, callback) => {
 
       function (cb) {
         let environmentToSave = {
-          CreatorID: userFound._id,
+          creatorID: userFound._id,
           environmentName: payloadData.environmentName,
           environmentCreator: userFound.firstName + userFound.lastName,
           panorama: payloadData.panorama,
@@ -429,7 +429,8 @@ const updateEnvironment = (userData, payloadData, callback) => {
           skyColor: payloadData.skyColor,
           skyUrl: payloadData.skyUrl,
         };
-        console.log({ environmentToSave });
+        // console.log({ environmentToSave });
+        console.log("payloadData._id", payloadData._id);
         Service.EnvironmentService.updateRecord(
           { _id: payloadData._id },
           environmentToSave,
@@ -447,7 +448,6 @@ const updateEnvironment = (userData, payloadData, callback) => {
     }
   );
 };
-
 export default {
   createEnvironment: createEnvironment,
   getEnvironments: getEnvironments,
@@ -455,8 +455,7 @@ export default {
   deleteEnvironment: deleteEnvironment,
   updateEnvironment: updateEnvironment,
   getEnvironmentsTourist: getEnvironmentsTourist,
-  getEnvironmentByIdTourist,
-  getEnvironmentByIdTourist,
+  getEnvironmentByIdTourist: getEnvironmentByIdTourist,
 };
 
 // const getServiceById = (userData, _id, callback) => {
