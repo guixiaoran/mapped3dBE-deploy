@@ -12,6 +12,6 @@ RUN npm install --silent
 
 RUN cp .env.example .env
 
-RUN PROJECT_FOLDER=data-shop-backend bash setup_upload.sh
+RUN PROJECT_FOLDER=Mapped3D_backend bash setup_upload.sh
 
 CMD ["npm","start"]
