@@ -1,4 +1,5 @@
 {
+  "homepage": "http://guixiaoran.github.io/mapped3dB-depoly",
   "name": "user-onboarding-module",
   "main": "src/entry.js",
   "description": "A Node based module using Mongodb to onboard user's into a very basic application, secured using JWT authorization",
@@ -8,6 +9,8 @@
     "node": "14.*"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "npx babel-node src/entry.js",
     "startWithNodemon": "nodemon --exec babel-node src/entry.js",
     "build": "npx babel src --out-dir build --ignore node_modules",
@@ -60,6 +63,7 @@
     "@babel/node": "^7.13.12",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-private-methods": "^7.13.0",
-    "@babel/preset-env": "^7.13.12"
+    "@babel/preset-env": "^7.13.12",
+    "gh-pages": "^4.0.0"
   }
 }
