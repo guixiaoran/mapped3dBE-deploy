@@ -1,5 +1,5 @@
 {
-  "homepage": "http://guixiaoran.github.io/mapped3dB-depoly",
+  "homepage": "http://guixiaoran.github.io/mapped3dBE-deploy",
   "name": "user-onboarding-module",
   "main": "src/entry.js",
   "description": "A Node based module using Mongodb to onboard user's into a very basic application, secured using JWT authorization",
